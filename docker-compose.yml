@@ -20,8 +20,6 @@ services:
     build: ./product-service
     ports:
       - "5002:5002"
-    container_name: product-service
-    restart: unless-stopped
 
   order-service:
     build: ./order-service
@@ -37,4 +35,3 @@ services:
     build: ./notification-service
     ports:
       - "5005:5005"
-
