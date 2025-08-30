@@ -27,7 +27,7 @@ jobs:
       # Since you don't have your own server, we can't copy to /var/www/html
       # Instead, we upload the build folder as an artifact
       - name: Upload frontend build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: build/
