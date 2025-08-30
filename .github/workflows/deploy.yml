@@ -1,23 +1,56 @@
-name: Frontend CI/CD
+name: Deploy Frontend to GitHub Pages
 
 on:
   push:
     branches:
-      - main   # jab bhi tum "main" branch par push karoge, ye chalega
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build-and-run:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
         run: |
           cd frontend
-          docker build -t frontend-app .
+          npm install
 
-      - name: Run Docker container
+      - name: Build project
         run: |
-          docker run -d -p 3000:3000 --name frontend frontend-app
+          cd frontend
+          npm run build
+
+      - name: Add 404 fallback (for client-side routing)
+        run: |
+          cp frontend/build/index.html frontend/build/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: frontend/build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
