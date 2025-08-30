@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted   # Use your self-hosted runner (Ubuntu)
+    runs-on: ubuntu-latest   # Use GitHub free runner
 
     steps:
       - name: Checkout code
@@ -24,7 +24,10 @@ jobs:
       - name: Build frontend
         run: npm run build
 
-      - name: Deploy frontend
-        run: |
-          sudo rm -rf /var/www/html/*
-          sudo cp -r build/* /var/www/html/
+      # Since you don't have your own server, we can't copy to /var/www/html
+      # Instead, we upload the build folder as an artifact
+      - name: Upload frontend build
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: build/
