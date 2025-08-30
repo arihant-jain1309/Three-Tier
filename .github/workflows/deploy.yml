@@ -3,31 +3,31 @@ name: Frontend Deploy
 on:
   push:
     branches:
-      - main   # Run workflow only when code is pushed to main branch
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest   # Use GitHub free runner
+    runs-on: ubuntu-latest   # self-hosted ki jagah free GitHub runner
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Install dependencies
         run: npm install
+        working-directory: frontend   # 👈 important
 
       - name: Build frontend
         run: npm run build
+        working-directory: frontend   # 👈 important
 
-      # Since you don't have your own server, we can't copy to /var/www/html
-      # Instead, we upload the build folder as an artifact
       - name: Upload frontend build
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: build/
+          path: frontend/build/   # 👈 build output folder
